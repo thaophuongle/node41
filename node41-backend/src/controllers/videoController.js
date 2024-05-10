@@ -1,9 +1,13 @@
-const getVideo = (req, res) => {
-  connect.query("SELECT * FROM video", (err, result) => {
-    res.send(result); // []
-  });
+import { Video } from "../models/video.js";
+
+const getVideo = async (req, res) => {
+  //SELECT * FROM video
+  let data = await Video.findAll();
+  res.send(data);
 };
 
 const createVideo = (req, res) => {};
 
-export { getVideo, createVideo };
+const updateVideo = (req, res) => {};
+
+export { getVideo, createVideo, updateVideo };

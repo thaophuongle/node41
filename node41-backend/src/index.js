@@ -7,6 +7,8 @@
 
 import express from "express";
 
+import rootRouter from "./routes/rootRouter.js";
+
 const app = express();
 // mở chặn CORS
 // yarn add cors
@@ -28,47 +30,12 @@ app.listen(8080);
 // định nghĩa API
 // endpoint => GET: demo
 // rest params: function(...rest)
-
-app.get("/demo/:id", (request, response) => {
-  // trả data trên URL
-  // + Query string: localhost:8080/demo?id=1&hoTen=John Cena
-  let { hoTen } = request.query;
-  // + query params: localhost:8080/demo/1
-  let { id } = request.params;
-
-  // trả json (body)
-  let { email, phone, address } = request.body;
-  /*
-        {
-            "email":"john@gmail.com",
-            "phone":"0909090",
-            "address":"111 DPB"
-        }
-    */
-
-  // 100 - 599
-  response.status(209).send({ id, hoTen, email, phone, address }); // string, object, list, list object,.. trừ number
-});
-
-// yarn add mysql2
-import mysql from "mysql2";
-
-// chuỗi kết nối CSDL
-const connect = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "1234",
-  port: "3306",
-  database: "db_youtube",
-});
-
 // API
 // endpoint: viết thường, cách nhau bởi gạch ngang, kiểu dữ kiệu luôn luôn là string
 // import { createVideo, getVideo } from "./controllers/videoController.js";
 // app.get("/get-video", getVideo);
 // app.post("/create-video", createVideo);
 
-import rootRouter from "./routes/rootRouter.js";
 app.use(rootRouter);
 
 // MVC  MC Routes
