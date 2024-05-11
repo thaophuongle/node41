@@ -1,34 +1,14 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class video extends Model {
+export default class video_comment extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    video_id: {
+    comment_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
-    },
-    video_name: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    thumbnail: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    views: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    source: {
-      type: DataTypes.STRING(255),
-      allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER,
@@ -38,17 +18,33 @@ export default class video extends Model {
         key: 'user_id'
       }
     },
-    type_id: {
+    video_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'video_type',
-        key: 'type_id'
+        model: 'video',
+        key: 'video_id'
       }
+    },
+    date_create: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    reply_list: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    timestamp: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'video',
+    tableName: 'video_comment',
     timestamps: false,
     indexes: [
       {
@@ -56,7 +52,7 @@ export default class video extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "video_id" },
+          { name: "comment_id" },
         ]
       },
       {
@@ -67,10 +63,10 @@ export default class video extends Model {
         ]
       },
       {
-        name: "type_id",
+        name: "video_id",
         using: "BTREE",
         fields: [
-          { name: "type_id" },
+          { name: "video_id" },
         ]
       },
     ]

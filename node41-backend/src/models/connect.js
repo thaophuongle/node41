@@ -14,3 +14,6 @@ export const sequelize = new Sequelize("db_youtube", "root", "1234", {
 // } catch {
 //   console.log(error);
 // }
+
+// yarn sequelize-auto -h <host> -d <database> -u <user> -x [password] -p [port] --dialect [dialect] -o [/path/to/models] -l esm
+// yarn sequelize-auto -h localhost -d db_youtube -u root -x 1234 -p 3306 --dialect mysql -o src/models -l esm

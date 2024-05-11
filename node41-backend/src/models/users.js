@@ -1,54 +1,47 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class video extends Model {
+export default class users extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    video_id: {
+    user_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    video_name: {
+    full_name: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    thumbnail: {
+    email: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: "email"
+    },
+    avatar: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    description: {
+    pass_word: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    face_app_id: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    role: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    refresh_token: {
       type: DataTypes.TEXT,
       allowNull: true
-    },
-    views: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    source: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'users',
-        key: 'user_id'
-      }
-    },
-    type_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'video_type',
-        key: 'type_id'
-      }
     }
   }, {
     sequelize,
-    tableName: 'video',
+    tableName: 'users',
     timestamps: false,
     indexes: [
       {
@@ -56,21 +49,15 @@ export default class video extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "video_id" },
-        ]
-      },
-      {
-        name: "user_id",
-        using: "BTREE",
-        fields: [
           { name: "user_id" },
         ]
       },
       {
-        name: "type_id",
+        name: "email",
+        unique: true,
         using: "BTREE",
         fields: [
-          { name: "type_id" },
+          { name: "email" },
         ]
       },
     ]
