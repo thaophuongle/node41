@@ -1,13 +1,21 @@
 //yarn add sequalize
 import { Sequelize } from "sequelize";
+import config from "../config/config.js";
 
-export const sequelize = new Sequelize("db_youtube", "root", "1234", {
-  host: "localhost",
-  dialect: "mysql",
-  port: "3306",
-});
+const sequelize = new Sequelize(
+  config.db_database,
+  config.db_user,
+  config.db_pass,
+  {
+    host: config.db_host,
+    dialect: config.db_dialect,
+    port: config.db_port,
+  }
+);
 
-//test connection
+export default sequelize;
+
+// test connection
 // try {
 //   sequelize.authenticate();
 //   console.log("OK");

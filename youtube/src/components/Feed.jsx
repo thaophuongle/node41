@@ -2,28 +2,45 @@ import React, { useEffect, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 
 import { Videos, Sidebar } from "./";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { getVideoAPI } from "../utils/fetchFromAPI";
+import { getVideoAPI, getVideoPageAPI, getVideoWithTypeAPI } from "../utils/fetchFromAPI.js";
 
 const Feed = () => {
   const [selectedCategory, setSelectedCategory] = useState("New");
   const [videos, setVideos] = useState(null);
+  const [pagination, setPagination] = useState(0);
 
   const params = useParams();
+  const navigate = useNavigate()
+
+  // useEffect(() => {
+  //  if (params.id) {
+  //   getVideoWithTypeAPI(params.id).then(result => {
+  //     setVideos(result)
+  //   })
+  //  }
+  //  else {
+  //   getVideoAPI().then(result => {
+  //     setVideos(result)
+  //   })
+  //  }
+  // }, [params.id]);
 
   useEffect(() => {
-
-  }, [params.id]);
-
-  useEffect(() => {
-
-    getVideoAPI().then(result => {
-      setVideos(result)
-    })
-
-
-  }, [])
+    if (params.page) {
+      getVideoPageAPI(params.page).then(result => {
+        setVideos(result.videoList)
+        setPagination(result.totalPage)
+      })
+    }
+    else {
+      getVideoPageAPI(1).then(result => {
+        setVideos(result.videoList)
+        setPagination(result.totalPage)
+      })
+    }
+  }, [params.page])
 
   return (
     <Stack sx={{ flexDirection: { sx: "column", md: "row" } }}>
@@ -41,6 +58,16 @@ const Feed = () => {
         </Typography>
 
         <Videos videos={videos} />
+        {Array.from({ length: pagination }, (_, index) => {
+
+return <button className="btn btn-sm btn-primary mx-2" 
+onClick={() => navigate(`/${index + 1}`)}>
+
+  {index + 1}
+  
+</button>
+}
+)}
       </Box>
     </Stack>
   );
