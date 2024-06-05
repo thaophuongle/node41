@@ -40,3 +40,20 @@ export const getVideoPageAPI = async (page) => {
   const { data } = await axios.get(`${BASE_URL}/video/get-video-page/${page}`);
   return data.data; // => {videoList, totalPage}
 };
+
+export const getVideoDetailAPI = async (videoId) => {
+  const { data } = await axios.get(
+    `${BASE_URL}/video/get-video-detail/${videoId}`
+  );
+  return data.data;
+};
+
+export const signUpAPI = async (model) => {
+  const { data } = await axios.post(`${BASE_URL}/user/sign-up`, model);
+  return data;
+};
+
+export const loginAPI = async (model) => {
+  const { data } = await axios.post(`${BASE_URL}/user/login`, model);
+  return data;
+};

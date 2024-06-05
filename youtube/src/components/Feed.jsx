@@ -26,6 +26,8 @@ const Feed = () => {
   //   })
   //  }
   // }, [params.id]);
+  
+  console.log(pagination)
 
   useEffect(() => {
     if (params.page) {

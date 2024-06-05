@@ -90,6 +90,14 @@ const getVideoPage = async (req, res) => {
   }
 };
 
+const getVideoDetail = async (req, res) => {
+  let { videoId } = req.params;
+  let data = await model.video.findByPk(videoId, {
+    include: ["type", "user"],
+  });
+  response(res, data, "Successfully", 200);
+};
+
 export {
   getVideo,
   createVideo,
@@ -97,4 +105,5 @@ export {
   getVideoType,
   getVideoWithType,
   getVideoPage,
+  getVideoDetail,
 };
