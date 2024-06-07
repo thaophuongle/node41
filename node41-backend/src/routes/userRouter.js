@@ -1,6 +1,11 @@
 //nơi định nghĩa API
 import express from "express";
-import { getUser, login, signUp } from "../controllers/userController.js";
+import {
+  getUser,
+  login,
+  resetToken,
+  signUp,
+} from "../controllers/userController.js";
 
 const userRouter = express.Router();
 
@@ -14,4 +19,7 @@ userRouter.post("/sign-up", signUp);
 
 //API sign up
 userRouter.post("/login", login);
+
+//API reset token
+userRouter.post("/reset-token", resetToken);
 export default userRouter;

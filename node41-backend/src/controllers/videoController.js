@@ -1,3 +1,4 @@
+import { checkToken } from "../config/jwt.js";
 import { response } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";

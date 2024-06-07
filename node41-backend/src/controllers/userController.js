@@ -1,4 +1,4 @@
-import { createToken } from "../config/jwt.js";
+import { createRefreshToken, createToken } from "../config/jwt.js";
 import { response } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
@@ -74,6 +74,19 @@ const login = async (req, res) => {
     //compareSync: tham số 1 là dữ liệu chưa mã hóa, tham số 2 là tham số đã mã hóa
     if (bcrypt.compareSync(password, checkEmail.pass_word)) {
       let token = createToken({ userId: checkEmail.dataValues.user_id });
+      let refToken = createRefreshToken({
+        userId: checkEmail.dataValues.user_id,
+      });
+
+      //update table 'users' in dtb
+      checkEmail.refresh_token = refToken;
+      //UPDATE users SET refresh_token = tokenRef WHERE user_id =
+      model.users.update(checkEmail.dataValues, {
+        where: {
+          user_id: checkEmail.dataValues.user_id,
+        },
+      });
+
       response(res, token, "Login successfully!", 200);
     } else {
       response(res, "", "Password is incorrect!", 400);
@@ -83,4 +96,10 @@ const login = async (req, res) => {
   }
 };
 
-export { getUser, signUp, login };
+const resetToken = (req, res) => {
+  //check token
+  //check refresh token => expired
+  //create new token
+};
+
+export { getUser, signUp, login, resetToken };
