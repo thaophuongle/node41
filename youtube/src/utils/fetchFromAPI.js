@@ -63,6 +63,23 @@ export const loginAPI = async (model) => {
   return data;
 };
 
+export const getCommentsAPI = async (videoId) => {
+  const { data } = await axios.get(
+    `${BASE_URL}/video/get-comment/${videoId}`,
+    options
+  );
+  return data.data;
+};
+
+export const commentAPI = async (model) => {
+  const { data } = await axios.post(
+    `${BASE_URL}/video/comment`,
+    model,
+    options
+  );
+  return data.data;
+};
+
 // Add a response interceptor
 axios.interceptors.response.use(
   function (response) {
@@ -74,7 +91,15 @@ axios.interceptors.response.use(
     if (
       error.response.status === 401 &&
       error.response.data === "TokenExpiredError"
-    )
-      return Promise.reject(error);
+    ) {
+      axios
+        .post(`${BASE_URL}/user/reset-token`, null, options)
+        .then((result) => {
+          localStorage.setItem("LOGIN_USER", result.data.data);
+          window.location.reload();
+        })
+        .catch((error) => {});
+    }
+    return Promise.reject(error);
   }
 );

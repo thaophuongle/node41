@@ -5,15 +5,22 @@ import { Typography, Box, Stack } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { Videos, Loader } from "./";
-import { getVideoDetailAPI } from "../utils/fetchFromAPI";
+import { commentAPI, getCommentsAPI, getVideoDetailAPI } from "../utils/fetchFromAPI";
 
 
 const VideoDetail = () => {
   const [videoDetail, setVideoDetail] = useState(null);
   const [videos, setVideos] = useState(null);
   const { id } = useParams();
-
+  const [commentList, setCommentList] = useState([]);
+  
   useEffect(() => {
+    getCommentsAPI(id).then(result => {
+      setCommentList(result)
+      console.log("comment", commentList)
+
+    })
+
     getVideoDetailAPI(id).then(result => {
       setVideoDetail(result)
     })
@@ -91,24 +98,38 @@ const VideoDetail = () => {
                         </div>
                       </div>
                       <div className="float-end mt-2 pt-1">
-                        <button type="button" className="btn btn-outline-light btn-sm me-3">Post comment</button>
+                        <button type="button" className="btn btn-outline-light btn-sm me-3" onClick={() => {
+                          let txtContent = document.querySelector("#textAreaExample").value
+                          let model = {
+                            videoId: id,
+                            content: txtContent
+                          }
+
+                          commentAPI(model).then(result => {
+                            getCommentsAPI(id).then(resData => {
+                              commentList.unshift(resData)
+                              setCommentList(resData)
+                            })
+                          }).catch(error => alert("Error"))
+                        }}>Post comment</button>
                         <button type="button" className="btn btn-outline-secondary btn-sm">Cancel</button>
                       </div>
                     </div>
 
                     <div className="card-body text-white" style={{ backgroundColor: '#000' }}>
 
-                  
-                         <div className="d-flex flex-start ">
+                  {
+                    commentList.map(item => {
+                      <div className="d-flex flex-start ">
 
-                          <img className="rounded-circle shadow-1-strong me-3" src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(19).webp" alt="avatar" width={60} height={60} />
+                          <img className="rounded-circle shadow-1-strong me-3" src={item.user.avatar} alt="avatar" width={60} height={60} />
 
                           <p className="mb-4 pb-2">
                             <h6 className="fw-bold text-white mb-1">
-                              John
+                              {item.user.full_name} - {item.user.date_create}
                             </h6>
 
-                            hello
+                            {item.content}
 
                             <div className=" d-flex justify-content-start ">
                               <a href="#!" className="d-flex align-items-center me-3 text-white">
@@ -123,6 +144,8 @@ const VideoDetail = () => {
                             </div>
                           </p>
                         </div>
+                    })
+                  }
                     
 
                     </div>

@@ -1,4 +1,4 @@
-import { checkToken } from "../config/jwt.js";
+import { checkToken, decodeToken } from "../config/jwt.js";
 import { response } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
@@ -99,6 +99,39 @@ const getVideoDetail = async (req, res) => {
   response(res, data, "Successfully", 200);
 };
 
+const getComment = async (req, res) => {
+  let { videoId } = req.params;
+  let data = await model.video_comment.findAll({
+    where: {
+      video_id: videoId,
+    },
+    include: ["user", "video"],
+    order: [["date_create", "DESC"]],
+  });
+
+  response(res, data, "Successfull", 200);
+};
+
+const createComment = async (req, res) => {
+  let { videoId, content } = req.body;
+
+  //mọi thao tác với userId đều lấy qua token
+  let { token } = req.headers;
+  let { data } = decodeToken(token);
+
+  //liên quan đến datetime => lấy từ server => BE
+  let dateComment = new Date();
+
+  let newData = {
+    user_id: data.userId,
+    video_id: videoId,
+    content: content,
+    date_create: dateComment,
+  };
+  await model.video_comment.create(newData);
+  response(res, "", "Comment is posted!", 200);
+};
+
 export {
   getVideo,
   createVideo,
@@ -107,4 +140,6 @@ export {
   getVideoWithType,
   getVideoPage,
   getVideoDetail,
+  getComment,
+  createComment,
 };

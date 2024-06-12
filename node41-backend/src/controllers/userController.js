@@ -1,4 +1,10 @@
-import { createRefreshToken, createToken } from "../config/jwt.js";
+import {
+  checkRefreshToken,
+  checkToken,
+  createRefreshToken,
+  createToken,
+  decodeToken,
+} from "../config/jwt.js";
 import { response } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
@@ -42,6 +48,20 @@ const signUp = async (req, res) => {
   }
 };
 
+const generateRandomString = (length = 6) => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  const charactersLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charactersLength);
+    result += characters[randomIndex];
+  }
+
+  return result;
+};
+
 const login = async (req, res) => {
   let { email, password } = req.body;
 
@@ -73,9 +93,11 @@ const login = async (req, res) => {
     // if ((checkEmail.pass_word == password))
     //compareSync: tham số 1 là dữ liệu chưa mã hóa, tham số 2 là tham số đã mã hóa
     if (bcrypt.compareSync(password, checkEmail.pass_word)) {
-      let token = createToken({ userId: checkEmail.dataValues.user_id });
+      let key = generateRandomString();
+      let token = createToken({ userId: checkEmail.dataValues.user_id, key });
       let refToken = createRefreshToken({
         userId: checkEmail.dataValues.user_id,
+        key,
       });
 
       //update table 'users' in dtb
@@ -96,10 +118,37 @@ const login = async (req, res) => {
   }
 };
 
-const resetToken = (req, res) => {
+const resetToken = async (req, res) => {
   //check token
+  let { token } = req.headers;
+  let errorToken = checkToken(token);
+
+  if (checkToken(token) != null && errorToken.name != "TokenExpiredError") {
+    response(res, "", "Not Authorized", 401);
+    return;
+  }
+  let { data } = decodeToken(token); //userId nằm trong data
+  let getUser = await model.users.findByPk(data.userId);
+
+  let tokenRef = decodeToken(getUser.dataValues.refresh_token);
+  if (data.key != tokenRef.data.key) {
+    response(res, "", "Not Authorized", 401);
+    return;
+  }
+
   //check refresh token => expired
+  //userId
+  if (checkRefreshToken(getUser.dataValues.refresh_token) != null) {
+    response(res, "", "Not Authorized", 401);
+    return;
+  }
+
   //create new token
+  let newToken = createToken({
+    userId: getUser.dataValues.user_id,
+    key: tokenRef.data.key,
+  });
+  response(res, newToken, "", 200);
 };
 
 export { getUser, signUp, login, resetToken };
