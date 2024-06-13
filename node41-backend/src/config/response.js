@@ -1,5 +1,5 @@
 export const response = (res, data, message, status_code) => {
-  res.json({
+  res.status(status_code).json({
     statusCode: status_code,
     data: data,
     message: message,

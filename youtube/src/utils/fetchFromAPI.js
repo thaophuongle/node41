@@ -80,6 +80,33 @@ export const commentAPI = async (model) => {
   return data.data;
 };
 
+export const loginFacebookAPI = async (model) => {
+  const { data } = await axios.post(
+    `${BASE_URL}/user/login-facebook`,
+    model,
+    options
+  );
+  return data;
+};
+
+export const checkEmailAPI = async (model) => {
+  const { data } = await axios.post(
+    `${BASE_URL}/user/check-email`,
+    model,
+    options
+  );
+  return data.data;
+};
+
+export const checkCodeAPI = async (model) => {
+  const { data } = await axios.post(
+    `${BASE_URL}/user/check-code`,
+    model,
+    options
+  );
+  return data;
+};
+
 // Add a response interceptor
 axios.interceptors.response.use(
   function (response) {

@@ -5,6 +5,7 @@ import {
   createToken,
   decodeToken,
 } from "../config/jwt.js";
+import { sendMail } from "../config/mail.js";
 import { response } from "../config/response.js";
 import sequelize from "../models/connect.js";
 import initModels from "../models/init-models.js";
@@ -151,4 +152,106 @@ const resetToken = async (req, res) => {
   response(res, newToken, "", 200);
 };
 
-export { getUser, signUp, login, resetToken };
+const loginFacebook = async (req, res) => {
+  let { userId, name, email } = req.body;
+
+  let checkUser = await model.users.findOne({
+    where: {
+      face_app_id: userId,
+    },
+  });
+
+  let user_id = "";
+
+  //check tồn tại email
+  //if does not exist
+  if (!checkUser) {
+    //INSERT INTO users (....) VALUE (.....)
+    let newData = {
+      full_name: name,
+      email: email,
+      avatar: "",
+      pass_word: "",
+      face_app_id: userId,
+      role: "user",
+      refresh_token: "",
+    };
+    let data = await model.users.create(newData);
+    user_id = data.dataValues.user_id;
+  } else {
+    //exist
+    user_id = checkUser.dataValues.user_id;
+  }
+
+  //exist
+  let key = generateRandomString();
+  let token = createToken({ userId: checkUser.dataValues.user_id, key });
+  let refToken = createRefreshToken({
+    userId: checkUser.dataValues.user_id,
+    key,
+  });
+
+  response(res, token, "", 200);
+};
+
+const checkEmail = async (req, res) => {
+  let { email } = req.body;
+  //check mail
+  let checkEmailExist = await model.users.findOne({
+    where: {
+      email: email,
+    },
+  });
+  if (!checkEmailExist) {
+    response(res, "", "Email does not exist!", 404);
+    return;
+  }
+
+  //create code
+
+  let dateNow = new Date();
+  let code = generateRandomString();
+  let newCode = {
+    code: code,
+    expired: dateNow.setMinutes(dateNow.getMinutes() + 10),
+  };
+  model.code.create(newCode);
+
+  //send email code
+  sendMail(email, "Reset your password", code);
+
+  response(res, true, "Successfully", 200);
+};
+
+const checkCode = async (req, res) => {
+  //check code
+  let { code } = req.body;
+  let checkResetCode = await model.code.findOne({
+    where: {
+      code: code,
+    },
+  });
+
+  if (checkResetCode) {
+    response(res, true, "", 200);
+    model.code.destroy({
+      where: {
+        id: checkResetCode.dataValues.id,
+      },
+    });
+  } else {
+    response(res, false, "The code is incorrect!", 403);
+  }
+
+  //remove code
+};
+
+export {
+  getUser,
+  signUp,
+  login,
+  resetToken,
+  loginFacebook,
+  checkEmail,
+  checkCode,
+};
