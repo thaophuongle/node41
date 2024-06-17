@@ -20,6 +20,7 @@ app.use(cors());
 
 // chèn middle ware khi FE  request BE
 app.use(express.json());
+app.use(express.static(".")); //định vị đường dẫn BE để load file
 
 // khởi tạo server với port
 app.listen(8080);
@@ -39,3 +40,22 @@ app.listen(8080);
 app.use(rootRouter);
 
 // MVC  MC Routes
+
+//yarn add swagger-ui-express swagger-jsdoc
+import swaggerUi from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
+
+//options chứa cấu hình swagger
+const options = {
+  definition: {
+    info: {
+      title: "api",
+      version: "1.0.0",
+    },
+  },
+  apis: ["src/swagger/index.js"], //chứa đường dẫn load api lên swagger
+};
+
+const specs = swaggerJsDoc(options); //truyền vô middleware
+
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(specs));

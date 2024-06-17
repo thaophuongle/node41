@@ -6,6 +6,8 @@ import { Videos, ChannelCard } from ".";
 
 import ReactPlayer from "react-player";
 import { DOMAIN_BE_IMG } from "../utils/constants";
+import { uploadCloudAPI } from "../utils/fetchFromAPI";
+
 
 const InfoUser = () => {
   const [channelDetail, setChannelDetail] = useState();
@@ -35,7 +37,23 @@ const InfoUser = () => {
           <div className="col-2">
             <img className="rounded-circle" src={avatar} width="100%" />
 
-            <input className="form-control" type="file" id="formFile" />
+            <input className="form-control" type="file" id="formFile" 
+            onChange={() => {
+              let value = document.querySelector("#formFile").files[0];
+              let formData = new FormData()
+              formData.append("file", value)
+              formData.append("upload_preset", "eweldhhk") 
+
+              // let formData = {
+              //   file: value,
+              //   upload_preset: "doven5azz"
+              // } //dùng cách này thì phải thêm headers trong uploadCloadAPI
+
+              uploadCloudAPI(formData).then(result => {
+                //console.log(result)
+              }).catch(error => alert(error.message))
+            }}
+            />
 
           </div>
           <div className=" col-10">

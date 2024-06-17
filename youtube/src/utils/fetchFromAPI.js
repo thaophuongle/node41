@@ -107,6 +107,19 @@ export const checkCodeAPI = async (model) => {
   return data;
 };
 
+export const uploadCloudAPI = async (formData) => {
+  const { data } = await axios.post(
+    `https://api.cloudinary.com/v1_1/doven5azz/upload`,
+    formData
+    // {
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //   },
+    // }
+  );
+  return data;
+};
+
 // Add a response interceptor
 axios.interceptors.response.use(
   function (response) {
