@@ -11,6 +11,7 @@ import {
 } from "../controllers/userController.js";
 import nodemailer from "nodemailer";
 import { sendMail } from "../config/mail.js";
+import { upload } from "../config/upload.js";
 
 const userRouter = express.Router();
 
@@ -40,26 +41,17 @@ userRouter.post("/check-email", checkEmail);
 userRouter.post("/check-code", checkCode);
 
 //API upload image to server
-//yarn add multer
 
-//đổi tên file
-//khai báo nơi lưu
-import multer, { diskStorage } from "multer";
-const upload = multer({
-  storage: diskStorage({
-    destination: process.cwd() + "/public/img",
-    filename: (req, file, callback) => {
-      //DD / MM / YYYY hh:mm:ss:ms
-      //get milisecond
-      let mSecond = new Date().getTime();
-      //đổi tên file
-      callback(null, mSecond + "_" + file.originalname);
-    },
-  }),
-  //dest: process.cwd() + "/public/img", //quy định url chưa lưu filw
-});
 userRouter.post("/upload-avatar", upload.single("avatar"), (req, res) => {
   let file = req.file;
+
+  //get token
+  let { token } = req.headers;
+  //decode user id
+
+  //getUser
+
+  //update avatar
   res.send(file);
 });
 

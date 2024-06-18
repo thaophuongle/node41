@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const BASE_URL = "http://localhost:8080";
+export const BASE_URL_IMG = "http://localhost:8080/public/img";
 
 const options = {
   params: {
@@ -116,6 +117,15 @@ export const uploadCloudAPI = async (formData) => {
     //     "Content-Type": "multipart/form-data",
     //   },
     // }
+  );
+  return data;
+};
+
+export const uploadAvatarAPI = async (formData) => {
+  const { data } = await axios.post(
+    `${BASE_URL}/user/upload-avatar`,
+    formData,
+    options
   );
   return data;
 };
