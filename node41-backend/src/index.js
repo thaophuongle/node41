@@ -59,3 +59,48 @@ const options = {
 const specs = swaggerJsDoc(options); //truyền vô middleware
 
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(specs));
+
+//B1: yarn add prisma @prisma/client
+
+//B2: yarn prisma init
+
+//B3: update lại chuỗi kết nối database trong .env và file scheme.prisma
+
+//B4: database first => yarn prisma db pull
+
+//B5: yarn prisma generate
+
+//demo
+import { PrismaClient } from "@prisma/client";
+let model = new PrismaClient();
+
+app.get("/get-video", async (req, res) => {
+  //SELECT * FROM video
+  //findAll()
+  //findOne()
+  let data = await model.video.findMany();
+  let data2 = await model.video.findFirst({
+    where: {
+      video_id: 2,
+    },
+  });
+
+  //sequelize destroy()
+  //prisma: model.video.delete()
+
+  //sequelize
+  //video.create({video_id, name, thumbnail, ...})
+
+  //prisma
+  //model.video.create(
+  // {
+  //   data: { video_id, video_name, thumbnail}
+  // })
+
+  //model.video.update({
+  //   data: { video_id, video_name, thumbnail}  ,
+  //   where: {}
+  // })
+
+  res.send(data);
+});
